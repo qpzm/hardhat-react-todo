@@ -1,26 +1,44 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import TodoList from './components/TodoList';
+import TodoForm from './components/TodoForm';
+import { useState } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+const initialTodos: Todo[] = [
+  {
+    text: 'Task1',
+    complete: false,
+  },
+  {
+    text: 'Task2',
+    complete: true,
+  },
+];
 
 function App() {
+  const [todos, setTodos] = useState(initialTodos);
+
+  const toggleTodo = (selectedTodo: Todo) => {
+    const newTodos = todos.map(todo => {
+      if (todo === selectedTodo) {
+        return {
+          ...todo,
+          complete: !todo.complete,
+        };
+      }
+      return todo;
+    });
+    setTodos(newTodos);
+  };
+
+  const addTodo = (text: string) => {
+    setTodos([...todos, {text: text, complete: false}]);
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <>
+      <TodoForm addTodo={addTodo} />
+      <TodoList todos={todos} toggleTodo={toggleTodo} />
+    </>
+  )
 }
 
 export default App;
