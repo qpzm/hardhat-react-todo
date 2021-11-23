@@ -1,9 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { TodoListItem } from './TodoListItem';
-import Container from 'react-bootstrap/Container';
-import ListGroup from 'react-bootstrap/ListGroup';
-import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
 
 interface Props {
   todos: Todo[];
