@@ -1,5 +1,6 @@
 import TodoList from './components/TodoList';
 import TodoForm from './components/TodoForm';
+import Account from './components/Account';
 import { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -35,6 +36,7 @@ function App() {
   }
   return (
     <>
+      <Account />
       <TodoForm addTodo={addTodo} />
       <TodoList todos={todos} toggleTodo={toggleTodo} />
     </>
