@@ -12,15 +12,14 @@ async function main() {
   // If this script is run directly using `node` you may want to call compile
   // manually to make sure everything is compiled
   // await hre.run('compile');
+  const [deployer] = await hre.ethers.getSigners();
+
+  console.log(
+    "Deploying contracts with the account:",
+    deployer.address
+  );
 
   // We get the contract to deploy
-  const Greeter = await hre.ethers.getContractFactory("Greeter");
-  const greeter = await Greeter.deploy("Hello, Hardhat!");
-
-  await greeter.deployed();
-
-  console.log("Greeter deployed to:", greeter.address);
-
   const Todos = await ethers.getContractFactory("Todos");
   const todos = await Todos.deploy();
   await todos.deployed();
