@@ -23,6 +23,7 @@ const { API_URL, PRIVATE_KEY, ETHERSCAN_API_KEY } = process.env;
 const config: HardhatUserConfig = {
   networks: {
     hardhat: {
+      chainId: 1337,
       mining: {},
     },
     ropsten: {
