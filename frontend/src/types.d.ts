@@ -1,6 +1,11 @@
 interface Todo {
   text: string;
-  complete: boolean;
+  completed: boolean;
+}
+
+interface TodoResponse {
+  text: string;
+  completed: boolean;
 }
 
 type ToggleTodo = (selectedTodo: Todo) => void;

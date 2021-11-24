@@ -21,6 +21,10 @@ contract Todos {
         // todos.push(todo);
     }
 
+    function getLength() public view returns (uint length) {
+        return todos.length;
+    }
+
     function get(uint _index) public view returns (string memory text, bool completed) {
         Todo storage todo = todos[_index];
         return (todo.text, todo.completed);

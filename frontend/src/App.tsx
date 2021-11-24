@@ -1,42 +1,52 @@
 import TodoList from './components/TodoList';
 import TodoForm from './components/TodoForm';
 import Account from './components/Account';
-import { useState } from 'react';
+import TodoListABI from './core/abi/TodoListABI.json'
+import EnvironmentVariables from './core/envs';
+import { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { ethers, BigNumber } from "ethers";
+import { useWeb3React } from "@web3-react/core";
 
-const initialTodos: Todo[] = [
-  {
-    text: 'Task1',
-    complete: false,
-  },
-  {
-    text: 'Task2',
-    complete: true,
-  },
-];
+const initialTodos: Todo[] = [];
+
 
 function App() {
+  const { account, library } = useWeb3React()
+  const signer = library?.getSigner(account).connectUnchecked();
   const [todos, setTodos] = useState(initialTodos);
 
-  const toggleTodo = (selectedTodo: Todo) => {
-    const newTodos = todos.map(todo => {
-      if (todo === selectedTodo) {
-        return {
-          ...todo,
-          complete: !todo.complete,
-        };
-      }
-      return todo;
-    });
+  const fetchTodo = async () => {
+    const contract = new ethers.Contract(EnvironmentVariables.todoListContractAddress, TodoListABI, library)
+    const length: number = (await contract.getLength()).toNumber();
+    const indices = []
+    for (let i=0; i < length; i++) {
+      indices.push(i);
+    }
+    const newTodos = await Promise.all(
+      indices.map(x => (contract.get(x)))
+    );
     setTodos(newTodos);
   };
 
-  const addTodo = (text: string) => {
-    setTodos([...todos, {text: text, complete: false}]);
+  const findIndex = (text: string) => todos.findIndex((item) => (item.text === text))
+
+  const toggleTodo = async (selectedTodo: Todo) => {
+    const contract = new ethers.Contract(EnvironmentVariables.todoListContractAddress, TodoListABI, signer)
+    await contract.toggleCompleted(findIndex(selectedTodo.text))
+  };
+
+  const addTodo = async (text: string) => {
+    const contract = new ethers.Contract(EnvironmentVariables.todoListContractAddress, TodoListABI, signer);
+    const result = await contract.create(text);
+    // TODO ether js 에서 트랜잭션 완료 이벤트를 구독해서 트랜잭션이 완료되었을 때만 추가하도록 수정
+    //result.wait((res) => { console.log(res); });
   }
+
   return (
     <>
       <Account />
+      <button onClick={fetchTodo}>할 일 불러오기</button>
       <TodoForm addTodo={addTodo} />
       <TodoList todos={todos} toggleTodo={toggleTodo} />
     </>
