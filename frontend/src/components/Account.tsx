@@ -1,18 +1,24 @@
 import { useWeb3React } from "@web3-react/core";
 import { injectedConnector } from "../connector";
-import React from "react";
 
-function Account() {
-  const { chainId, account, activate, active } = useWeb3React();
-  const onClick = () => {
-    activate(injectedConnector);
+interface Props {
+}
+
+export const Account: React.FC<Props> = () => {
+  const { chainId, account, activate, deactivate, active } = useWeb3React();
+  const onClickActivate = async () => {
+    await activate(injectedConnector);
+  }
+
+  const onClickDeactivate = () => {
+    // TODO
   }
 
   return (
     <div>
       <div> Chain Id: {chainId} </div>
       <div> Account: {account} </div>
-      {active ? (<div>Connected</div>) : (<button onClick={onClick}> Connect </button>)}
+      {active ? (<div>Connected</div>) : (<button onClick={onClickActivate}> Connect </button>)}
     </div>
   )
 }

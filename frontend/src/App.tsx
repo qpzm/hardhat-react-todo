@@ -33,20 +33,31 @@ function App() {
 
   const toggleTodo = async (selectedTodo: Todo) => {
     const contract = new ethers.Contract(EnvironmentVariables.todoListContractAddress, TodoListABI, signer)
-    await contract.toggleCompleted(findIndex(selectedTodo.text))
+    await contract.toggleCompleted(findIndex(selectedTodo.text));
   };
 
   const addTodo = async (text: string) => {
     const contract = new ethers.Contract(EnvironmentVariables.todoListContractAddress, TodoListABI, signer);
-    const result = await contract.create(text);
+    const transaction = await contract.create(text);
+    console.log(transaction);
+    // const receipt = await wait(transaction);
+    // console.log(receipt);
     // TODO ether js 에서 트랜잭션 완료 이벤트를 구독해서 트랜잭션이 완료되었을 때만 추가하도록 수정
-    //result.wait((res) => { console.log(res); });
   }
+
+  useEffect(() => {
+    console.log(library);
+    const f = async () => {
+      if (library) {
+        await fetchTodo()
+      }
+    }
+    f();
+  }, [library]);
 
   return (
     <>
       <Account />
-      <button onClick={fetchTodo}>할 일 불러오기</button>
       <TodoForm addTodo={addTodo} />
       <TodoList todos={todos} toggleTodo={toggleTodo} />
     </>
