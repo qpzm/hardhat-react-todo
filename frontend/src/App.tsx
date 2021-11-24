@@ -12,7 +12,7 @@ const initialTodos: Todo[] = [];
 
 
 function App() {
-  const { account, library } = useWeb3React()
+  const { account, library, active } = useWeb3React()
   const signer = library?.getSigner(account).connectUnchecked();
   const [todos, setTodos] = useState(initialTodos);
 
@@ -46,14 +46,14 @@ function App() {
   }
 
   useEffect(() => {
-    console.log(library);
+    console.log(active);
     const f = async () => {
-      if (library) {
+      if (active) {
         await fetchTodo()
       }
     }
     f();
-  }, [library]);
+  }, [active]);
 
   return (
     <>
