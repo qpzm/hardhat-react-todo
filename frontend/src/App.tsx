@@ -11,7 +11,7 @@ import { useWeb3React } from "@web3-react/core";
 const initialTodos: Todo[] = [];
 
 function App() {
-  const { account, library, active, chainId } = useWeb3React()
+  const { account, library, chainId } = useWeb3React()
   const signer = library?.getSigner(account).connectUnchecked();
   const [todos, setTodos] = useState(initialTodos);
 
@@ -70,13 +70,13 @@ function App() {
 
   useEffect(() => {
     const f = async () => {
-      if (active) {
+      if (library) {
         console.log("hi")
         await fetchTodo()
       }
     }
     f();
-  }, [active]);
+  }, [library]);
 
   return (
     <>
