@@ -5,11 +5,10 @@ import TodoListABI from './core/abi/TodoListABI.json'
 import EnvironmentVariables from './core/envs';
 import { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { ethers, BigNumber } from "ethers";
+import { ethers } from "ethers";
 import { useWeb3React } from "@web3-react/core";
 
 const initialTodos: Todo[] = [];
-
 
 function App() {
   const { account, library, active } = useWeb3React()
@@ -20,7 +19,7 @@ function App() {
     const contract = new ethers.Contract(EnvironmentVariables.todoListContractAddress, TodoListABI, library)
     const length: number = (await contract.getLength()).toNumber();
     const indices = []
-    for (let i=0; i < length; i++) {
+    for (let i = 0; i < length; i++) {
       indices.push(i);
     }
     const newTodos = await Promise.all(
@@ -33,7 +32,18 @@ function App() {
 
   const toggleTodo = async (selectedTodo: Todo) => {
     const contract = new ethers.Contract(EnvironmentVariables.todoListContractAddress, TodoListABI, signer)
-    await contract.toggleCompleted(findIndex(selectedTodo.text));
+    const tx = await contract.toggleCompleted(findIndex(selectedTodo.text));
+    console.log(tx);
+    const receipt = await tx.wait();
+    console.log(receipt);
+    _toggleTodo(selectedTodo);
+  };
+
+  const _toggleTodo = (selectedTodo: Todo) => {
+    const newTodos = [...todos];
+    const i = findIndex(selectedTodo.text);
+    newTodos[i] = Object.assign({}, todos[i], {completed: !todos[i].completed})
+    setTodos(newTodos);
   };
 
   const addTodo = async (text: string) => {
