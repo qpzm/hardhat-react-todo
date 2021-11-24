@@ -38,11 +38,11 @@ function App() {
 
   const addTodo = async (text: string) => {
     const contract = new ethers.Contract(EnvironmentVariables.todoListContractAddress, TodoListABI, signer);
-    const transaction = await contract.create(text);
-    console.log(transaction);
-    // const receipt = await wait(transaction);
-    // console.log(receipt);
-    // TODO ether js 에서 트랜잭션 완료 이벤트를 구독해서 트랜잭션이 완료되었을 때만 추가하도록 수정
+    const tx = await contract.create(text);
+    console.log(tx);
+    const receipt = await tx.wait();
+    console.log(receipt);
+    setTodos([...todos, { text: text, completed: false }])
   }
 
   useEffect(() => {
