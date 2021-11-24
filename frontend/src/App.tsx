@@ -11,12 +11,17 @@ import { useWeb3React } from "@web3-react/core";
 const initialTodos: Todo[] = [];
 
 function App() {
-  const { account, library, active } = useWeb3React()
+  const { account, library, active, chainId } = useWeb3React()
   const signer = library?.getSigner(account).connectUnchecked();
   const [todos, setTodos] = useState(initialTodos);
 
   const fetchTodo = async () => {
-    const contract = new ethers.Contract(EnvironmentVariables.todoListContractAddress, TodoListABI, library)
+    if (chainId === undefined) {
+      return
+    }
+
+    const address = EnvironmentVariables[chainId].todoListContractAddress
+    const contract = new ethers.Contract(address, TodoListABI, library)
     const length: number = (await contract.getLength()).toNumber();
     const indices = []
     for (let i = 0; i < length; i++) {
@@ -31,7 +36,11 @@ function App() {
   const findIndex = (text: string) => todos.findIndex((item) => (item.text === text))
 
   const toggleTodo = async (selectedTodo: Todo) => {
-    const contract = new ethers.Contract(EnvironmentVariables.todoListContractAddress, TodoListABI, signer)
+    if (chainId === undefined) {
+      return
+    }
+    const address = EnvironmentVariables[chainId].todoListContractAddress
+    const contract = new ethers.Contract(address, TodoListABI, signer)
     const tx = await contract.toggleCompleted(findIndex(selectedTodo.text));
     console.log(tx);
     const receipt = await tx.wait();
@@ -47,7 +56,11 @@ function App() {
   };
 
   const addTodo = async (text: string) => {
-    const contract = new ethers.Contract(EnvironmentVariables.todoListContractAddress, TodoListABI, signer);
+    if (chainId === undefined) {
+      return
+    }
+    const address = EnvironmentVariables[chainId].todoListContractAddress
+    const contract = new ethers.Contract(address, TodoListABI, signer);
     const tx = await contract.create(text);
     console.log(tx);
     const receipt = await tx.wait();
@@ -56,9 +69,9 @@ function App() {
   }
 
   useEffect(() => {
-    console.log(active);
     const f = async () => {
       if (active) {
+        console.log("hi")
         await fetchTodo()
       }
     }
