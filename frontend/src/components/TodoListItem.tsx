@@ -14,7 +14,7 @@ export const TodoListItem: React.FC<Props> = ({ todo, toggleTodo }) => {
         <input
           type="checkbox"
           checked={todo.completed}
-          onClick={() => {
+          onChange={() => {
             toggleTodo(todo);
           }}
         />{' '}
